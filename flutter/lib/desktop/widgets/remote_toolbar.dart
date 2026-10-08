@@ -21,6 +21,7 @@ import '../../models/model.dart';
 import '../../models/platform_model.dart';
 import '../../common/shared_state.dart';
 import './popup_menu.dart';
+import './tabbar_widget.dart' show kezasConfirmCloseConnection; // KEZAS DESK
 import './kb_layout_type_chooser.dart';
 import 'package:flutter_hbb/utils/scale.dart';
 import 'package:flutter_hbb/common/widgets/custom_scale_base.dart';
@@ -2983,6 +2984,7 @@ class _CloseMenu extends StatelessWidget {
       assetName: 'assets/close.svg',
       tooltip: 'Close',
       onPressed: () async {
+        if (!await kezasConfirmCloseConnection()) return; // KEZAS DESK
         if (await showConnEndAuditDialogCloseCanceled(ffi: ffi)) {
           return;
         }

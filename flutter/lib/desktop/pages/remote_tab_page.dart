@@ -81,6 +81,7 @@ class _ConnectionTabPageState extends State<ConnectionTabPage> {
         selectedIcon: selectedIcon,
         unselectedIcon: unselectedIcon,
         onTabCloseButton: () async {
+          if (!await kezasConfirmCloseConnection()) return; // KEZAS DESK
           if (await desktopTryShowTabAuditDialogCloseCancelled(
             id: peerId!,
             tabController: tabController,
@@ -331,6 +332,11 @@ class _ConnectionTabPageState extends State<ConnectionTabPage> {
           style: style,
         ),
         proc: () async {
+          if (!await kezasConfirmCloseConnection()) {
+            // KEZAS DESK
+            cancelFunc();
+            return;
+          }
           if (await desktopTryShowTabAuditDialogCloseCancelled(
             id: key,
             tabController: tabController,
@@ -392,6 +398,7 @@ class _ConnectionTabPageState extends State<ConnectionTabPage> {
   Future<bool> handleWindowCloseButton() async {
     final connLength = tabController.length;
     if (connLength == 1) {
+      if (!await kezasConfirmCloseConnection()) return false; // KEZAS DESK
       if (await desktopTryShowTabAuditDialogCloseCancelled(
         id: tabController.state.value.tabs[0].key,
         tabController: tabController,
@@ -454,6 +461,7 @@ class _ConnectionTabPageState extends State<ConnectionTabPage> {
         selectedIcon: selectedIcon,
         unselectedIcon: unselectedIcon,
         onTabCloseButton: () async {
+          if (!await kezasConfirmCloseConnection()) return; // KEZAS DESK
           if (await desktopTryShowTabAuditDialogCloseCancelled(
             id: id,
             tabController: tabController,

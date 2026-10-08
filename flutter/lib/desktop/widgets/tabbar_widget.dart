@@ -917,6 +917,60 @@ Future<bool> closeConfirmDialog() async {
   return res == true;
 }
 
+// KEZAS DESK: pytanie przed zamknieciem KAZDEGO polaczenia (rowniez jednej karty).
+// Opcja "Confirm before closing multiple tabs" (kOptionEnableConfirmClosingTabs) dziala jako wylacznik:
+// gdy jest wylaczona - zamyka bez pytania; odznaczenie pola w oknie wylacza pytanie na przyszlosc.
+Future<bool> kezasConfirmCloseConnection() async {
+  if (!option2bool(kOptionEnableConfirmClosingTabs,
+      bind.mainGetLocalOption(key: kOptionEnableConfirmClosingTabs))) {
+    return true;
+  }
+  var confirm = true;
+  final res = await gFFI.dialogManager.show<bool>((setState, close, context) {
+    submit() {
+      String value = bool2option(kOptionEnableConfirmClosingTabs, confirm);
+      bind.mainSetLocalOption(
+          key: kOptionEnableConfirmClosingTabs, value: value);
+      close(true);
+    }
+
+    return CustomAlertDialog(
+      title: Row(children: [
+        const Icon(Icons.warning_amber_sharp,
+            color: Colors.redAccent, size: 28),
+        const SizedBox(width: 10),
+        Text(translate("Warning")),
+      ]),
+      content: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Czy na pewno zamknąć połączenie?'),
+            CheckboxListTile(
+              contentPadding: const EdgeInsets.all(0),
+              dense: true,
+              controlAffinity: ListTileControlAffinity.leading,
+              title: Text(
+                translate("Confirm before closing multiple tabs"),
+              ),
+              value: confirm,
+              onChanged: (v) {
+                if (v == null) return;
+                setState(() => confirm = v);
+              },
+            )
+          ]),
+      actions: [
+        dialogButton("Cancel", onPressed: close, isOutline: true),
+        dialogButton("OK", onPressed: submit),
+      ],
+      onSubmit: submit,
+      onCancel: close,
+    );
+  });
+  return res == true;
+}
+
 class _ListView extends StatelessWidget {
   final DesktopTabController controller;
   final RxList<String> invisibleTabKeys;
